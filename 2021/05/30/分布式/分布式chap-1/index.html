@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>分布式chap.1 - Erial&#039;s Blog</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="Erial&#039;s Blog"><meta name="msapplication-TileImage" content="/img/Tabicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Erial&#039;s Blog"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="第一章 Architecture大纲（outline） 冯诺依曼模型的修改 分布式硬件 弗林分类法 共享内存系统和分布式存储系统 内存层次结构和缓存一致性 互联网络   分布式软件 输入输出"><meta property="og:type" content="blog"><meta property="og:title" content="分布式chap.1"><meta property="og:url" content="http://example.com/2021/05/30/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8Fchap-1/"><meta property="og:site_name" content="Erial&#039;s Blog"><meta property="og:description" content="第一章 Architecture大纲（outline） 冯诺依曼模型的修改 分布式硬件 弗林分类法 共享内存系统和分布式存储系统 内存层次结构和缓存一致性 互联网络   分布式软件 输入输出"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="http://example.com/2021/05/30/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8Fchap-1/分布式chap-1/cache映射.png"><meta property="article:published_time" content="2021-05-30T12:46:40.000Z"><meta property="article:modified_time" content="2021-06-06T17:01:40.272Z"><meta property="article:author" content="Erial"><meta property="article:tag" content="复习"><meta property="article:tag" content="分布式"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="http://example.com/2021/05/30/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8Fchap-1/分布式chap-1/cache映射.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2021/05/30/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8Fchap-1/"},"headline":"分布式chap.1","image":["http://example.com/2021/05/30/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8Fchap-1/分布式chap-1/cache映射.png"],"datePublished":"2021-05-30T12:46:40.000Z","dateModified":"2021-06-06T17:01:40.272Z","author":{"@type":"Person","name":"Erial"},"publisher":{"@type":"Organization","name":"Erial's Blog","logo":{"@type":"ImageObject","url":"http://example.com/img/ERIAL.png"}},"description":"第一章 Architecture大纲（outline） 冯诺依曼模型的修改 分布式硬件 弗林分类法 共享内存系统和分布式存储系统 内存层次结构和缓存一致性 互联网络   分布式软件 输入输出"}</script><link rel="canonical" href="http://example.com/2021/05/30/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8Fchap-1/"><link rel="icon" href="/img/Tabicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><!--!--><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const id = '#' + CSS.escape(location.hash.substring(1));
+          const $tabMenu = document.querySelector(`.tabs a[href="${id}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(id);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/ERIAL.png" alt="Erial&#039;s Blog" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2021-05-30T12:46:40.000Z" title="2021/5/30 20:46:40">2021-05-30</time>发表</span><span class="level-item"><time dateTime="2021-06-06T17:01:40.272Z" title="2021/6/7 01:01:40">2021-06-07</time>更新</span><span class="level-item"><a class="link-muted" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a></span><span class="level-item">25 分钟读完 (大约3746个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">分布式chap.1</h1><div class="content"><h2 id="第一章-Architecture"><a href="#第一章-Architecture" class="headerlink" title="第一章 Architecture"></a>第一章 Architecture</h2><h3 id="大纲（outline）"><a href="#大纲（outline）" class="headerlink" title="大纲（outline）"></a>大纲（outline）</h3><ul>
+<li>冯诺依曼模型的修改</li>
+<li>分布式硬件<ul>
+<li>弗林分类法</li>
+<li>共享内存系统和分布式存储系统</li>
+<li>内存层次结构和缓存一致性</li>
+<li>互联网络</li>
+</ul>
+</li>
+<li>分布式软件</li>
+<li>输入输出</li>
+</ul>
+<span id="more"></span>
+
+<hr>
+<p>CPU与存储器分离是冯诺依曼模型的瓶颈</p>
+<p>改进冯诺依曼模型：</p>
+<ul>
+<li>缓存</li>
+<li>虚拟内存</li>
+<li>低级并行</li>
+</ul>
+<h3 id="缓存基础"><a href="#缓存基础" class="headerlink" title="缓存基础"></a>缓存基础</h3><ul>
+<li>缓存：可以比其他一些内存位置用更少的时间访问的内存位置的集合。</li>
+<li>CPU高速缓存：CPU可以比其访问主内存更快地访问的内存位置的集合。</li>
+</ul>
+<p>CPU高速缓存可以与CPU位于同一芯片上，也可以位于与普通存储芯片相比访问速度更快的单独芯片上。</p>
+<ul>
+<li>缓存的想法</li>
+</ul>
+<p>使用更广泛的互连，并在单个内存访问中传输更多数据或更多指令。</p>
+<p>将数据块和指令块存储在实际上更靠近CPU寄存器的特殊内存中。</p>
+<ul>
+<li>哪些数据或指令放cache？ <ul>
+<li>程序倾向使用物理上接近最近使用的数据和指令。</li>
+</ul>
+</li>
+</ul>
+<p>局部性原理（系统使用<strong>更宽</strong>的互联结构访问数据和指令）</p>
+<ul>
+<li>局部性 - 访问一个位置，然后访问附近的位置<ul>
+<li>在访问一个内存位置后，程序将在不久的将来（时间局部性）访问附近的位置（空间局部性）。</li>
+</ul>
+</li>
+<li>为了利用局部性原理，系统使用更广泛的有效互连来访问数据和指令。（缓存块或缓存行）</li>
+</ul>
+<p>​	时间局部性</p>
+<p>​	空间局部性</p>
+<p>cache分级：<br>    L1：最快最小<br>    L2：<br>    L3：最慢最大</p>
+<p>Cache查找由L1往下查找，Cache中有信息，则<strong>命中</strong>；信息没找到，则称<strong>缺失</strong>；那么程序将会从主存读出查找的信息。</p>
+<p>缓存写入策略<br>    CPU往cache写数据，cache中的值和主存中的值<strong>不一致</strong>。<br>    <strong>解决</strong>：写直达（writing-through）：写入cache时，立即写入主存。<br>               写回（writing-back）：将数据更新的cache line标记为脏（dirty），然后cache line缓存替换时，<strong>dirty</strong>的行被写入主存。</p>
+<h3 id="Cache映射"><a href="#Cache映射" class="headerlink" title="Cache映射"></a>Cache映射</h3><p>​	<strong>全相联（fully associative）</strong><br>​		每个cache line可以放置在cache的任何位置<br>​	<strong>直接映射（directed mapped）</strong><br>​		每个cache line在cache中有唯一位置<br>​	<strong>n路组相联（n-way set associative）折中方案</strong><br>​		每个cache line可以放置到cache中n个不同区域中的一个</p>
+<img src="分布式chap-1/cache映射.png" alt="cache映射" style="zoom:75%;" />
+
+<p>内存中的行能映射到cache中的多个不同位置时，如何决定替换或<strong>驱逐</strong>哪一行？<br>    常用<strong>最近最少使用</strong>方案</p>
+<h3 id="虚拟存储器"><a href="#虚拟存储器" class="headerlink" title="虚拟存储器"></a>虚拟存储器</h3><p>大型程序，数据和指令集主存可能放不下，这时就是用<strong>虚拟存储器（虚拟内存）</strong>。<br>把当前程序用到的放入主存，暂时不需要的放入辅存。<br>虚拟内存也是对数据块和指令块进行操作，通常称为<strong>页</strong>。<br>辅存较主存慢非常多，所以也的大小通常比较大。</p>
+<hr>
+<h3 id="指令级并行"><a href="#指令级并行" class="headerlink" title="指令级并行"></a>指令级并行</h3><h4 id="流水线"><a href="#流水线" class="headerlink" title="流水线"></a>流水线</h4><p>将功能分成多个单独的硬件或功能单元，</p>
+<h4 id="多发射"><a href="#多发射" class="headerlink" title="多发射"></a>多发射</h4><p>一个时钟周期发射多条指令，一般处理器有多个累加器或乘法器以实现多发射</p>
+<ul>
+<li>编译时调度，<strong>静态多发射</strong></li>
+<li>运行时调度，<strong>动态多发射</strong>，<strong>超标量</strong></li>
+</ul>
+<p>为了能够多发射，需要用到<strong>预测</strong>，</p>
+<hr>
+<h3 id="硬件多线程"><a href="#硬件多线程" class="headerlink" title="硬件多线程"></a>硬件多线程</h3><h4 id="线程级并行"><a href="#线程级并行" class="headerlink" title="线程级并行"></a>线程级并行</h4><p>提供<strong>粗粒度</strong>的并行性，TLP的线程 对 ILP的指令</p>
+<h4 id="硬件多线程-1"><a href="#硬件多线程-1" class="headerlink" title="硬件多线程"></a>硬件多线程</h4><p>任务阻塞，线程快速切换，继续其他任务</p>
+<h4 id="同步多线程"><a href="#同步多线程" class="headerlink" title="同步多线程"></a>同步多线程</h4><p>细粒度多线程变种，允许多个线程同时使用多个功能单元来利用超标量处理器的性能。<br>优先线程：有多条指令就绪的线程，能减轻线程减速的问题。</p>
+<hr>
+<h3 id="并行硬件"><a href="#并行硬件" class="headerlink" title="并行硬件"></a>并行硬件</h3><h4 id="SISD"><a href="#SISD" class="headerlink" title="SISD"></a>SISD</h4><h4 id="SIMD（好"><a href="#SIMD（好" class="headerlink" title="SIMD（好"></a>SIMD（好</h4><p>单指令多数据，一个控制单元和多个ALU，每个ALU要么在当前数据上执行同一个指令，要么空闲，下一条指令前需等待广播；通过在处理期间划分数据以提高并行性</p>
+<p><strong>向量处理器</strong></p>
+<p>对数组或数据向量操作；<br>向量寄存器：存储多个操作数组成的向量，并能对其内容进行操作<br>向量化和流水化的功能单元：相同操作应用于向量中的每个元素<br>向量指令：向量上的操作<br>交叉存储器：内存系统有多个内存<strong>体</strong>组成，访问一个内存体后，想再访问他有延迟，访问其他的内存体则很快<br>步长式存储器访问和硬件散射&#x2F;聚集操作：固定步长访问向量元素；对无规律间隔的数据进行<strong>读</strong>（聚集）、<strong>写</strong>（散射）</p>
+<p>优点：</p>
+<ul>
+<li>速度快，易于使用</li>
+<li>向量编译器擅长识别向量化代码</li>
+<li>识别不能向量化的循环并提供不能向量化的原因</li>
+<li>高内存带宽</li>
+<li>每个加载的数据都使用</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>可扩展性有限</li>
+<li>不能处理不规则的数据结构</li>
+</ul>
+<h4 id="MISD"><a href="#MISD" class="headerlink" title="MISD"></a>MISD</h4><hr>
+<h4 id="MIMD（好"><a href="#MIMD（好" class="headerlink" title="MIMD（好"></a>MIMD（好</h4><p>多指令多数据，包括一组完全独立的处理单元或核，每个处理单元或核都有自己的控制单元和ALU；<br>通常是<strong>异步</strong>的，即各个处理器能按照他们的节奏运行；<br>没有全局时钟，不同处理器的系统时间没有联系，除非强制同步。</p>
+<h4 id="共享内存系统"><a href="#共享内存系统" class="headerlink" title="共享内存系统"></a>共享内存系统</h4><p>一个或者多核处理器，通过<strong>互联网络</strong>，与内存系统相互连接，处理器可以访问每个内存区域，处理器之间<strong>隐式通信</strong>。<br>通常每个核都拥有私有的L1cache，其他级cache可能共享也可能不共享；</p>
+<ul>
+<li><strong>一致内存访问</strong></li>
+</ul>
+<p>互连网络将所有处理器直接连接到主存，每个处理器访问内存任意区域的时间相同</p>
+<ul>
+<li><strong>非一致内存访问</strong></li>
+</ul>
+<p>互连网络将每个处理器连接到一块内存，通过处理器中的硬件达到访问内存中其他块的目的，0号处理器访问直接连接的0号内存速度快，0号处理器访问1号处理器直接连接的1号内存速度慢。</p>
+<h4 id="分布式内存系统"><a href="#分布式内存系统" class="headerlink" title="分布式内存系统"></a>分布式内存系统</h4><p>分布式内存系统又称<strong>集群</strong>：由一组商品化系统组成，通过商品化网络连接（以太网）。<br>每个系统中的处理器连接系统内的自己的内存，每个系统通过互连网络进行显式通信。</p>
+<hr>
+<h4 id="互连网络"><a href="#互连网络" class="headerlink" title="互连网络"></a>互连网络</h4><p>对两种内存系统有影响</p>
+<ul>
+<li><p><strong>共享内存互连网络</strong></p>
+<p>  共享内存系统，最常用<strong>总线</strong>和<strong>交叉开关矩阵</strong></p>
+<p>  <strong>总线</strong></p>
+</li>
+</ul>
+<p>​		<strong>交叉开关矩阵</strong></p>
+<p>​		使用交换器控制数据传递，线表示双向链路。允许在不同设备间通信，速度比总线快；开销相对较高，成本也比较高。</p>
+<ul>
+<li><strong>分布式内存互连网络</strong></li>
+</ul>
+<ol>
+<li><strong>直接互连</strong></li>
+</ol>
+<p>交换器处理器一对一，交换机之间相互连接，形成一个<strong>环</strong>或者<strong>环面网格</strong>。比总线高级，因为允许多个通信同时发生。<br>环面网格比环成本高，因为交换器更复杂。</p>
+<p>​		等分宽度：<br>​		衡量<strong>同时通信的链路数目</strong>或<strong>连接性</strong>的标准，计算链路数量</p>
+<p>​		链路带宽：<br>​		传输数据的速度</p>
+<p>​		等分带宽：<br>​		衡量网络质量，计算链路带宽。</p>
+<p>最理想直接互联网络是：<strong>全相连网络</strong><br>        等分宽度：<strong>p^2&#x2F;4</strong><br>        节点数量多不可能做这样的连接，因为他总共需要 <strong>p^2&#x2F;4+p&#x2F;2</strong> 条链路，不切实际。<br>        所以一般作为衡量其他互连网络的基础</p>
+<p>超立方体：<br>        用于实际系统中的高度互连的直接互连网络，递归构造。<br>        一维超立方体：全互连系统；二维超立方体：由两个一维组成，通过相应交换器相连，形成一个正方形；n维超立方体有<strong>p&#x3D;2^n</strong>个节点，每个节点和n个节点相连，等分宽度为<strong>p&#x2F;2</strong>，连接性更高，但需要更强大交换器，以支持连线数量。<br>        编号方法：直接相连的节点，编号只改变一位，例如000连001、010、100。</p>
+<ol start="2">
+<li><strong>间接互连</strong></li>
+</ol>
+<p>通常由单向连接和一组处理器组成，每个处理器有一个输入链路和一个输出链路，链路通过<strong>交换网络</strong>连接</p>
+<p>​		交叉开关矩阵：<br>​		类似共享内存系统中的交叉开关矩阵，但把双向链路改为单向链路，使用<strong>p^2</strong>个交换器。</p>
+<p>​		omega网络：<br>​		交换器是2x2的交叉开关矩阵。成本较交叉开关网络低。共用了**1&#x2F;2plog2^(p)<strong>个交换器，因为2x2，所以总共是</strong>2plog2^(p)**个。</p>
+<p>​		胖树：</p>
+<h4 id="延迟与带宽"><a href="#延迟与带宽" class="headerlink" title="延迟与带宽"></a>延迟与带宽</h4><p><strong>消息传送时间 &#x3D; l + n &#x2F; b</strong></p>
+<p>延迟（latency）：发送源开始传输数据到目的地接收数据的时间。</p>
+<p>带宽（bandwidth）：目的地开始接收数据的速度。</p>
+<hr>
+<h4 id="内存结构层次"><a href="#内存结构层次" class="headerlink" title="内存结构层次"></a>内存结构层次</h4><p>多个层次，cpu内cache有多级，内存延迟，</p>
+<h4 id="Cache一致性"><a href="#Cache一致性" class="headerlink" title="Cache一致性"></a>Cache一致性</h4><p>每个CPU有自己的Cache，所以在进行对数据的修改时，会遇到一致性的问题，过时的数据仍存储在CPU中。如果多CPU对一个Cache则不会，但因为是串行访问cache，速度会慢。</p>
+<h4 id="一致性协议"><a href="#一致性协议" class="headerlink" title="一致性协议"></a>一致性协议</h4><p>直写和写回</p>
+<p>处理器A和处理器B，各自本地的Cache Line有同一个变量的拷贝，此时该Cache Line处于<strong>Shared</strong>状态。<br>处理器A在本地修改了变量，除了把本地变量的Cache Line改为<strong>Modified</strong>状态外，还需要在处理器B读同一个变量前把处理器B存这个变量的Cache Line改为<strong>Invalid</strong>状态。后续处理器B需要对这个变量读写时，会Cache Miss。会重新从内存拷贝新的数据到CacheLine中。</p>
+<h5 id="监听Cache一致性协议"><a href="#监听Cache一致性协议" class="headerlink" title="监听Cache一致性协议"></a>监听Cache一致性协议</h5><p>想法基于总线系统，监听总线，看到变量更新，则广播，并标记过时的变量为非法。<br>由于每次监听到改变都要广播，广播开销很大。</p>
+<h5 id="基于目录的Cache一致性协议"><a href="#基于目录的Cache一致性协议" class="headerlink" title="基于目录的Cache一致性协议"></a>基于目录的Cache一致性协议</h5><p>通过<strong>目录</strong>的数据结构，目录存储每行的状态，对应每个Cache Line，更新Cache，对应行的目录项就会更新。当变量要更新时，就会查目录，并将包含这个变量的cache置为非法状态。</p>
+<h5 id="伪共享"><a href="#伪共享" class="headerlink" title="伪共享"></a>伪共享</h5><p>多个CPU的多个线程同时修改自己的变量。。。</p>
+<hr>
+<h3 id="并行软件"><a href="#并行软件" class="headerlink" title="并行软件"></a>并行软件</h3><p>软件是负担，</p>
+<h4 id="SPMD（single-program-multiple-data）："><a href="#SPMD（single-program-multiple-data）：" class="headerlink" title="SPMD（single program,multiple data）："></a>SPMD（single program,multiple data）：</h4><p>仅包含一段可执行代码，通过使用条件转移语句，让这段代码在执行时表现得像是在不同处理器上执行的程序。</p>
+<h4 id="进程或线程的协调"><a href="#进程或线程的协调" class="headerlink" title="进程或线程的协调"></a>进程或线程的协调</h4><ol>
+<li>分配任务，每个进程&#x2F;线程分配大致相同的工作量，且使得通信量最小</li>
+<li>安排进程&#x2F;线程之间的同步</li>
+<li>安排进程&#x2F;线程之间的通信</li>
+</ol>
+<h4 id="共享内存"><a href="#共享内存" class="headerlink" title="共享内存"></a>共享内存</h4><h5 id="动态线程"><a href="#动态线程" class="headerlink" title="动态线程"></a>动态线程</h5><p>共享内存程序使用。主线程等待任务，派生出新的线程，线程处理结束，被终止合并回主线程</p>
+<h5 id="静态线程"><a href="#静态线程" class="headerlink" title="静态线程"></a>静态线程</h5><p>派生所有的线程，工作结束前，所有线程都在运行，所有线程合并回主线程后，主线程做清理工作（释放内存），然后终止。</p>
+<p>静态线程比动态线程性能更好，但可能会浪费系统资源（对资源的利用不是很高效）</p>
+<h5 id="非确定性"><a href="#非确定性" class="headerlink" title="非确定性"></a>非确定性</h5><p>定义：给定的输入产生不同的输出。MIMD中，异步运行可能引发。</p>
+<p>竞争条件</p>
+<p>临界区</p>
+<p>互斥</p>
+<p>互斥锁（增强了临界区串行性）</p>
+<p>忙等待</p>
+<h4 id="分布式内存"><a href="#分布式内存" class="headerlink" title="分布式内存"></a>分布式内存</h4><h5 id="消息传递"><a href="#消息传递" class="headerlink" title="消息传递"></a>消息传递</h5><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">char</span> message [ <span class="number">1</span> <span class="number">0</span> <span class="number">0</span> ] ;</span><br><span class="line">. . .</span><br><span class="line">my_rank = <span class="built_in">Get_rank</span> ( ) ;</span><br><span class="line"><span class="keyword">if</span> ( my_rank == <span class="number">1</span>) &#123;</span><br><span class="line">     <span class="built_in">sprintf</span> ( message , <span class="string">&quot;Greetings from process 1&quot;</span> ) ;</span><br><span class="line">     <span class="built_in">Send</span> ( message , MSG_CHAR , <span class="number">100</span> , <span class="number">0</span> ) ;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> ( my_rank == <span class="number">0</span>) &#123;</span><br><span class="line">     <span class="built_in">Receive</span> ( message , MSG_CHAR , <span class="number">100</span> , <span class="number">1</span> ) ;</span><br><span class="line">     <span class="built_in">printf</span> ( <span class="string">&quot;Process 0 &gt; Received: %s\n&quot;</span> , message ) ;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>程序段是SPMD，两个程序使用相同的可执行代码，但执行不同的操作。执行的操作以来与他们的序号。</li>
+<li>不同进程中，变量指的是不同的内存块</li>
+</ol>
+<h5 id="单向通信"><a href="#单向通信" class="headerlink" title="单向通信"></a>单向通信</h5><ol>
+<li>单向通信或远程内存访问中，单个处理器调用一个函数</li>
+<li>能够简化通信，大大降低通信成本</li>
+<li>实践难以实现</li>
+</ol>
+<h5 id="划分全局地址空间的语言（PGAS语言）"><a href="#划分全局地址空间的语言（PGAS语言）" class="headerlink" title="划分全局地址空间的语言（PGAS语言）"></a>划分全局地址空间的语言（PGAS语言）</h5><p>允许用户使用共享内存技术来对分布式内存硬件进行编程。</p>
+<p>私有变量在运行程序的核的局部内存空间中分配，共享数据结构中数据的分配由程序员分配。</p>
+<hr>
+<h3 id="输入与输出"><a href="#输入与输出" class="headerlink" title="输入与输出"></a>输入与输出</h3><h5 id="并行程序输入输出时，制定一些规则"><a href="#并行程序输入输出时，制定一些规则" class="headerlink" title="并行程序输入输出时，制定一些规则"></a>并行程序输入输出时，制定一些规则</h5><ul>
+<li>在分布式内存程序中，只有进程0能够访问stdin。共享内存程序中，只有主线程可以访问。</li>
+<li>分布式内存和共享内存系统中，所有进程&#x2F;线程都可以访问stdout和stderr</li>
+<li>因为输出到stdout的非确定顺序，一般只有一个进程&#x2F;线程回将结果输出到stdout。输出调试程序的结构是例外，它可以多个进程&#x2F;线程写到stdout</li>
+<li>只有一个进程&#x2F;线程你会尝试访问一个除stdin、stdout或者stderr以外的文件。例如每个进程&#x2F;线程能打开自己私有的文件进行读&#x2F;写，但没有两个进程&#x2F;线程能打开相同的文件。</li>
+<li>调试程序输出在生成输出结果时，应该包括进程&#x2F;线程的序号或进程标识符。</li>
+</ul>
+</div><div class="article-licensing box"><div class="licensing-title"><p>分布式chap.1</p><p><a href="http://example.com/2021/05/30/分布式/分布式chap-1/">http://example.com/2021/05/30/分布式/分布式chap-1/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>Erial</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-05-30</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-06-07</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/%E5%A4%8D%E4%B9%A0/">复习</a><a class="link-muted mr-2" rel="tag" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a></div><!--!--></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/alipay.jpeg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wechatpay.jpeg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2021/06/01/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8Fchap-3/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">分布式chap-3</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2021/05/26/%E5%90%83%E5%96%9D%E7%8E%A9%E4%B9%90/%E7%B4%A0%E6%8F%8F%E8%AF%BE/"><span class="level-item">素描课</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><!--!--></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-02-06T12:23:50.000Z">2023-02-06</time></p><p class="title"><a href="/2023/02/06/Hexo/Hexo%E5%AE%89%E8%A3%85/">Hexo安装</a></p><p class="categories"><a href="/categories/Hexo-Blog/">Hexo Blog</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-06-11T08:46:40.000Z">2021-06-11</time></p><p class="title"><a href="/2021/06/11/CUDA/cuda6/">cuda6</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-06-10T08:46:40.000Z">2021-06-10</time></p><p class="title"><a href="/2021/06/10/CUDA/cuda5/">cuda5</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-06-09T08:46:40.000Z">2021-06-09</time></p><p class="title"><a href="/2021/06/09/CUDA/cuda4/">cuda4</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-06-08T08:46:40.000Z">2021-06-08</time></p><p class="title"><a href="/2021/06/08/CUDA/cuda3/">cuda3</a></p></div></article></div></div></div><div class="column column-right is-4-tablet is-4-desktop is-4-widescreen  order-3 is-sticky"><!--!--></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/ERIAL.png" alt="Erial&#039;s Blog" height="28"></a><p class="is-size-7"><span>&copy; 2023 Erial</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-cn");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

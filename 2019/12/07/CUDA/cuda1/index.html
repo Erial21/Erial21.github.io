@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>cuda1 - Erial&#039;s Blog</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="Erial&#039;s Blog"><meta name="msapplication-TileImage" content="/img/Tabicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Erial&#039;s Blog"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="your description"><meta property="og:type" content="blog"><meta property="og:title" content="cuda1"><meta property="og:url" content="http://example.com/2019/12/07/CUDA/cuda1/"><meta property="og:site_name" content="Erial&#039;s Blog"><meta property="og:description" content="your description"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="http://example.com/img/og_image.png"><meta property="article:published_time" content="2019-12-07T06:32:46.000Z"><meta property="article:modified_time" content="2023-02-06T20:05:46.891Z"><meta property="article:author" content="Erial"><meta property="article:tag" content="CUDA"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="http://example.com/img/og_image.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2019/12/07/CUDA/cuda1/"},"headline":"cuda1","image":["http://example.com/img/og_image.png"],"datePublished":"2019-12-07T06:32:46.000Z","dateModified":"2023-02-06T20:05:46.891Z","author":{"@type":"Person","name":"Erial"},"publisher":{"@type":"Organization","name":"Erial's Blog","logo":{"@type":"ImageObject","url":"http://example.com/img/ERIAL.png"}},"description":"your description"}</script><link rel="canonical" href="http://example.com/2019/12/07/CUDA/cuda1/"><link rel="icon" href="/img/Tabicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><!--!--><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const id = '#' + CSS.escape(location.hash.substring(1));
+          const $tabMenu = document.querySelector(`.tabs a[href="${id}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(id);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/ERIAL.png" alt="Erial&#039;s Blog" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-6-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2019-12-07T06:32:46.000Z" title="2019/12/7 14:32:46">2019-12-07</time>发表</span><span class="level-item"><time dateTime="2023-02-06T20:05:46.891Z" title="2023/2/7 04:05:46">2023-02-07</time>更新</span><span class="level-item">10 分钟读完 (大约1536个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">cuda1</h1><div class="content"><h2 id="CUDA-介绍"><a href="#CUDA-介绍" class="headerlink" title="CUDA 介绍"></a>CUDA 介绍</h2><h4 id="CPU-：面向延迟设计"><a href="#CPU-：面向延迟设计" class="headerlink" title="CPU ：面向延迟设计"></a>CPU ：面向延迟设计</h4><p>image-20210607010547778(C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210607010547778.png</p>
+<ul>
+<li>ALU<ul>
+<li>减少操作延迟</li>
+</ul>
+</li>
+<li>Cache<ul>
+<li>将长延迟内存访问转换为短延迟缓存访问</li>
+</ul>
+</li>
+<li>控制模块<ul>
+<li>分支预测以减少分支延迟</li>
+<li>数据转发以减少数据延迟<span id="more"></span></li>
+</ul>
+</li>
+</ul>
+<h4 id="GPU：面向吞吐量设计"><a href="#GPU：面向吞吐量设计" class="headerlink" title="GPU：面向吞吐量设计"></a>GPU：面向吞吐量设计</h4><p>image-20210607010747373(C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210607010747373.png</p>
+<ul>
+<li>小缓存<ul>
+<li>提高内存吞吐量</li>
+</ul>
+</li>
+<li>简单控制<ul>
+<li>无分支预测</li>
+<li>无数据转发</li>
+</ul>
+</li>
+<li>高效的ALU<ul>
+<li>许多、长延迟但大量流水线以实现高吞吐量</li>
+</ul>
+</li>
+<li>需要大量线程来容忍延迟<ul>
+<li>线程逻辑</li>
+<li>线程状态</li>
+</ul>
+</li>
+</ul>
+<p><strong>并行代码，GPU比CPU快10倍以上，串行代码，CPU比GPU快10倍以上</strong></p>
+<hr>
+<h3 id="CUDA编程模型"><a href="#CUDA编程模型" class="headerlink" title="CUDA编程模型"></a>CUDA编程模型</h3><p>编程模型是底层计算机系统的抽象，它允许表达算法和数据结构。<br>语言和 API 提供了这些抽象的实现，并允许将算法和数据结构付诸实践——编程模型的存在独立于编程语言和支持 API 的选择。</p>
+<h4 id="一些设计目标"><a href="#一些设计目标" class="headerlink" title="一些设计目标"></a>一些设计目标</h4><ul>
+<li><p>扩展到 100 个内核、1000 个并行线程</p>
+</li>
+<li><p>让程序员专注于并行算法<br>  不是并行编程语言的机制。</p>
+</li>
+<li><p>启用异构系统（即 CPU+GPU）<br>  CPU 和 GPU 是具有独立 DRAM 的独立设备</p>
+</li>
+</ul>
+<h4 id="关键并行抽象"><a href="#关键并行抽象" class="headerlink" title="关键并行抽象"></a>关键并行抽象</h4><ul>
+<li>并发线程的层次结构</li>
+<li>轻量级同步原语</li>
+<li>协作线程的共享内存模型</li>
+</ul>
+<h4 id="线程层次结构"><a href="#线程层次结构" class="headerlink" title="线程层次结构"></a>线程层次结构</h4><ul>
+<li><strong>线程thread</strong> - 由 CUDA 运行时分发<br>  （由 threadIdx 标识）</li>
+<li><strong>Warp</strong> – 最多 32 个线程的调度单元</li>
+<li><strong>块block</strong> – 用户定义的 1 到 512 个线程组。<br>  （由 blockIdx 标识）</li>
+<li><strong>网格grid</strong> – 一组一个或多个块。 为每个 CUDA 核函数创建一个网格</li>
+</ul>
+<h4 id="cuda内存层次结构"><a href="#cuda内存层次结构" class="headerlink" title="cuda内存层次结构"></a>cuda内存层次结构</h4><ul>
+<li><p>寄存器</p>
+<p>  每个线程内存用于自动变量和寄存器溢出。</p>
+</li>
+<li><p>共享内存</p>
+<p>  每块低延迟内存，允许块内数据共享和同步。 线程可以通过这块内存安全地共享数据，并且可以通过 _ _syncthreads() 进行屏障同步</p>
+</li>
+<li><p>全局内存</p>
+<p>  可以在块或网格之间共享的设备级内存</p>
+</li>
+</ul>
+<h4 id="硬件"><a href="#硬件" class="headerlink" title="硬件"></a>硬件</h4><p>Tesla 架构的主要组件是：<br>流式多处理器（8800 有 16 个）<br>标量处理器<br>内存层次结构<br>互联网络<br>主机接口</p>
+<h4 id="流式多处理器Streaming-Multiprocessor-SM"><a href="#流式多处理器Streaming-Multiprocessor-SM" class="headerlink" title="流式多处理器Streaming Multiprocessor (SM)"></a>流式多处理器Streaming Multiprocessor (SM)</h4><p>image-20210607012204300(C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210607012204300.png</p>
+<ul>
+<li>每个 SM 有 8 个标量处理器 (SP)Each SM has 8 Scalar Processors (SP)</li>
+<li>IEEE 754 32 位浮点支持（不完全支持）- IEEE 754 32-bit floating point support (incomplete support)</li>
+<li>每个 SP 是一个 1.35 GHz 处理器（32 GFLOPS 峰值）- Each SP is a 1.35 GHz processor (32 GFLOPS peak)</li>
+<li>支持 32 位和 64 位整数- Supports 32 and 64 bit integers</li>
+<li>8,192 个动态分区的 32 位寄存器- 8,192 dynamically partitioned 32-bit registers</li>
+<li>硬件支持 768 个线程（32 个线程的 24 个 SIMT 经线）- Supports 768 threads in hardware (24 SIMT warps of 32 threads)</li>
+<li>在硬件中完成的线程调度- Thread scheduling done in hardware</li>
+<li>16KB 低延迟共享内存- 16KB of low-latency shared memory</li>
+<li>2 个特殊函数单元（平方根倒数、三角函数等）- 2 Special Function Units (reciprocal square root, trig functions, etc)</li>
+</ul>
+<h4 id="数据并行-向量加法示例"><a href="#数据并行-向量加法示例" class="headerlink" title="数据并行 - 向量加法示例"></a>数据并行 - 向量加法示例</h4><p>image-20210607155913228(C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210607155913228.png</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Compute vector sum C = A + B</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">vecAdd</span><span class="params">(<span class="type">float</span> *h_A, <span class="type">float</span> *h_B, <span class="type">float</span> *h_C, <span class="type">int</span> n)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> i;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i&lt;n; i++) h_C[i] = h_A[i] + h_B[i];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// Memory allocation for h_A, h_B, and h_C</span></span><br><span class="line">	  <span class="comment">// I/O to read h_A and h_B, N elements</span></span><br><span class="line">	  …</span><br><span class="line">    vecAdd(h_A, h_B, h_C, N);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="cudaMalloc"><a href="#cudaMalloc" class="headerlink" title="cudaMalloc()"></a>cudaMalloc()</h5><ul>
+<li>在设备<em>全局内存</em>中分配一个对象</li>
+<li>两个参数<ul>
+<li>指向已分配对象的指针的地址</li>
+<li>已分配对象的大小（以字节为单位）</li>
+</ul>
+</li>
+</ul>
+<h5 id="cudaFree"><a href="#cudaFree" class="headerlink" title="cudaFree()"></a>cudaFree()</h5><ul>
+<li>从设备全局内存中释放对象</li>
+<li>一个参数<ul>
+<li>指向释放对象的指针</li>
+</ul>
+</li>
+</ul>
+<h5 id="cudaMemcpy"><a href="#cudaMemcpy" class="headerlink" title="cudaMemcpy()"></a>cudaMemcpy()</h5><ul>
+<li>内存数据传输</li>
+<li>需要四个参数<ul>
+<li>指向目的地的指针</li>
+<li>指向源的指针</li>
+<li>复制的字节数</li>
+<li>转移类型&#x2F;方向</li>
+</ul>
+</li>
+</ul>
+<h4 id="向量加法主机代码"><a href="#向量加法主机代码" class="headerlink" title="向量加法主机代码"></a>向量加法主机代码</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">vecAdd</span><span class="params">(<span class="type">float</span> *h_A, <span class="type">float</span> *h_B, <span class="type">float</span> *h_C, <span class="type">int</span> n)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> size = n * <span class="keyword">sizeof</span>(<span class="type">float</span>); <span class="type">float</span> *d_A, *d_B, *d_C;</span><br><span class="line"></span><br><span class="line">    cudaMalloc((<span class="type">void</span> **) &amp;d_A, size);    </span><br><span class="line">    cudaMemcpy(d_A, h_A, size, cudaMemcpyHostToDevice);</span><br><span class="line">     cudaMalloc((<span class="type">void</span> **) &amp;d_B, size);</span><br><span class="line">     cudaMemcpy(d_B, h_B, size, cudaMemcpyHostToDevice);</span><br><span class="line">     cudaMalloc((<span class="type">void</span> **) &amp;d_C, size);</span><br><span class="line"></span><br><span class="line">     <span class="comment">// Kernel invocation code – to be shown later</span></span><br><span class="line"></span><br><span class="line">     cudaMemcpy(h_C, d_C, size, cudaMemcpyDeviceToHost);</span><br><span class="line">     cudaFree(d_A); cudaFree(d_B); cudaFree (d_C);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="cuda执行模式"><a href="#cuda执行模式" class="headerlink" title="cuda执行模式"></a>cuda执行模式</h3><p>异构主机（CPU）+设备（GPU）应用C程序</p>
+<ul>
+<li>主机 C 代码中的串行部分</li>
+<li>设备 SPMD 内核代码中的并行部分</li>
+</ul>
+<p>image-20210607160519981(C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210607160519981.png</p>
+<h4 id="ISA级别的程序"><a href="#ISA级别的程序" class="headerlink" title="ISA级别的程序"></a>ISA级别的程序</h4><ul>
+<li>程序是存储在内存中的一组指令，可由硬件读取、解释和执行。<ul>
+<li>CPU 和 GPU 都是基于（不同的）指令集设计的</li>
+</ul>
+</li>
+<li>程序指令对存储在存储器和&#x2F;或寄存器中的数据进行操作。</li>
+</ul>
+<h4 id="作为冯诺依曼处理器的线程"><a href="#作为冯诺依曼处理器的线程" class="headerlink" title="作为冯诺依曼处理器的线程"></a>作为冯诺依曼处理器的线程</h4><p>线程是“虚拟化的”或“抽象的”</p>
+<p>image-20210607160745684(C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210607160745684.png</p>
+<h4 id="并行线程数组"><a href="#并行线程数组" class="headerlink" title="并行线程数组"></a>并行线程数组</h4><ul>
+<li>CUDA 内核由线程网格（数组）执行<ul>
+<li>网格中的所有线程都运行相同的内核代码（SPMD，Single Program Multiple Data）</li>
+<li>每个线程都有用于计算内存地址和做出控制决策的索引</li>
+</ul>
+</li>
+</ul>
+<p>image-20210607160922707(C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210607160922707.png</p>
+<h4 id="线程块：可扩展的合作"><a href="#线程块：可扩展的合作" class="headerlink" title="线程块：可扩展的合作"></a>线程块：可扩展的合作</h4><p>image-20210607160955464(C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210607160955464.png</p>
+<ul>
+<li>将线程数组分成多个块<ul>
+<li>块内的线程通过共享内存、原子操作和屏障同步进行协作</li>
+<li>不同块中的线程不交互</li>
+</ul>
+</li>
+</ul>
+<h4 id="blockIdx-and-threadIdx"><a href="#blockIdx-and-threadIdx" class="headerlink" title="blockIdx and threadIdx"></a>blockIdx and threadIdx</h4><ul>
+<li><p>每个线程使用索引来决定要处理的数据</p>
+<ul>
+<li>blockIdx：1D、2D 或 3D (CUDA 4.0)</li>
+<li>threadIdx：1D、2D 或 3D</li>
+</ul>
+</li>
+<li><p>处理多维数据时简化内存寻址</p>
+<ul>
+<li>图像处理</li>
+<li>求解体积上的偏微分方程</li>
+<li>…</li>
+</ul>
+</li>
+</ul>
+<p>image-20210607161116355(C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210607161116355.png</p>
+<h4 id="NVCC编译器"><a href="#NVCC编译器" class="headerlink" title="NVCC编译器"></a>NVCC编译器</h4><ul>
+<li>NVIDIA 提供了一个 CUDA-C 编译器<ul>
+<li>nvcc</li>
+</ul>
+</li>
+<li>NVCC 编译设备代码，然后将代码转发到主机编译器（例如 g++）</li>
+<li>可用于编译和链接host only应用程序</li>
+</ul>
+</div><div class="article-licensing box"><div class="licensing-title"><p>cuda1</p><p><a href="http://example.com/2019/12/07/CUDA/cuda1/">http://example.com/2019/12/07/CUDA/cuda1/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>Erial</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2019-12-07</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2023-02-07</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/CUDA/">CUDA</a></div><!--!--></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/alipay.jpeg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wechatpay.jpeg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2021/05/26/%E5%90%83%E5%96%9D%E7%8E%A9%E4%B9%90/%E7%B4%A0%E6%8F%8F%E8%AF%BE/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">素描课</span></a></div></nav><!--!--></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1 is-sticky"><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-02-06T12:23:50.000Z">2023-02-06</time></p><p class="title"><a href="/2023/02/06/Hexo/Hexo%E5%AE%89%E8%A3%85/">Hexo安装</a></p><p class="categories"><a href="/categories/Hexo-Blog/">Hexo Blog</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-06-11T08:46:40.000Z">2021-06-11</time></p><p class="title"><a href="/2021/06/11/CUDA/cuda6/">cuda6</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-06-10T08:46:40.000Z">2021-06-10</time></p><p class="title"><a href="/2021/06/10/CUDA/cuda5/">cuda5</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-06-09T08:46:40.000Z">2021-06-09</time></p><p class="title"><a href="/2021/06/09/CUDA/cuda4/">cuda4</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-06-08T08:46:40.000Z">2021-06-08</time></p><p class="title"><a href="/2021/06/08/CUDA/cuda3/">cuda3</a></p></div></article></div></div><div class="column-right-shadow is-hidden-widescreen is-sticky"></div></div><div class="column column-right is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only order-3 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#CUDA-介绍"><span class="level-left"><span class="level-item">1</span><span class="level-item">CUDA 介绍</span></span></a><ul class="menu-list"><ul class="menu-list"><li><a class="level is-mobile" href="#CPU-：面向延迟设计"><span class="level-left"><span class="level-item">1.1.1</span><span class="level-item">CPU ：面向延迟设计</span></span></a></li><li><a class="level is-mobile" href="#GPU：面向吞吐量设计"><span class="level-left"><span class="level-item">1.1.2</span><span class="level-item">GPU：面向吞吐量设计</span></span></a></li></ul><li><a class="level is-mobile" href="#CUDA编程模型"><span class="level-left"><span class="level-item">1.2</span><span class="level-item">CUDA编程模型</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#一些设计目标"><span class="level-left"><span class="level-item">1.2.1</span><span class="level-item">一些设计目标</span></span></a></li><li><a class="level is-mobile" href="#关键并行抽象"><span class="level-left"><span class="level-item">1.2.2</span><span class="level-item">关键并行抽象</span></span></a></li><li><a class="level is-mobile" href="#线程层次结构"><span class="level-left"><span class="level-item">1.2.3</span><span class="level-item">线程层次结构</span></span></a></li><li><a class="level is-mobile" href="#cuda内存层次结构"><span class="level-left"><span class="level-item">1.2.4</span><span class="level-item">cuda内存层次结构</span></span></a></li><li><a class="level is-mobile" href="#硬件"><span class="level-left"><span class="level-item">1.2.5</span><span class="level-item">硬件</span></span></a></li><li><a class="level is-mobile" href="#流式多处理器Streaming-Multiprocessor-SM"><span class="level-left"><span class="level-item">1.2.6</span><span class="level-item">流式多处理器Streaming Multiprocessor (SM)</span></span></a></li><li><a class="level is-mobile" href="#数据并行-向量加法示例"><span class="level-left"><span class="level-item">1.2.7</span><span class="level-item">数据并行 - 向量加法示例</span></span></a></li><li><a class="level is-mobile" href="#向量加法主机代码"><span class="level-left"><span class="level-item">1.2.8</span><span class="level-item">向量加法主机代码</span></span></a></li></ul></li><li><a class="level is-mobile" href="#cuda执行模式"><span class="level-left"><span class="level-item">1.3</span><span class="level-item">cuda执行模式</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#ISA级别的程序"><span class="level-left"><span class="level-item">1.3.1</span><span class="level-item">ISA级别的程序</span></span></a></li><li><a class="level is-mobile" href="#作为冯诺依曼处理器的线程"><span class="level-left"><span class="level-item">1.3.2</span><span class="level-item">作为冯诺依曼处理器的线程</span></span></a></li><li><a class="level is-mobile" href="#并行线程数组"><span class="level-left"><span class="level-item">1.3.3</span><span class="level-item">并行线程数组</span></span></a></li><li><a class="level is-mobile" href="#线程块：可扩展的合作"><span class="level-left"><span class="level-item">1.3.4</span><span class="level-item">线程块：可扩展的合作</span></span></a></li><li><a class="level is-mobile" href="#blockIdx-and-threadIdx"><span class="level-left"><span class="level-item">1.3.5</span><span class="level-item">blockIdx and threadIdx</span></span></a></li><li><a class="level is-mobile" href="#NVCC编译器"><span class="level-left"><span class="level-item">1.3.6</span><span class="level-item">NVCC编译器</span></span></a></li></ul></li></ul></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/ERIAL.png" alt="Erial&#039;s Blog" height="28"></a><p class="is-size-7"><span>&copy; 2023 Erial</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-cn");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

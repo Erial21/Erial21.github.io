@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>分布式chap-7 - Erial&#039;s Blog</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="Erial&#039;s Blog"><meta name="msapplication-TileImage" content="/img/Tabicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Erial&#039;s Blog"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="弗洛伊德算法大纲 全对最短路径问题 动态二维数组 并行算法设计 点对点通信 块行矩阵 I&amp;#x2F;O 分析和基准测试"><meta property="og:type" content="blog"><meta property="og:title" content="分布式chap-7"><meta property="og:url" content="http://example.com/2021/06/06/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8Fchap-7/"><meta property="og:site_name" content="Erial&#039;s Blog"><meta property="og:description" content="弗洛伊德算法大纲 全对最短路径问题 动态二维数组 并行算法设计 点对点通信 块行矩阵 I&amp;#x2F;O 分析和基准测试"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210606025605662.png"><meta property="og:image" content="c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210607000401609.png"><meta property="og:image" content="c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210607000423159.png"><meta property="og:image" content="c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210606175031080.png"><meta property="og:image" content="c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210606175632348.png"><meta property="og:image" content="c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210606203416907.png"><meta property="og:image" content="c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210606204806534.png"><meta property="og:image" content="c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210606205030605.png"><meta property="og:image" content="c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210607000000288.png"><meta property="og:image" content="c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210607000030926.png"><meta property="og:image" content="c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210607000131344.png"><meta property="article:published_time" content="2021-06-05T16:52:17.000Z"><meta property="article:modified_time" content="2021-06-06T16:04:50.142Z"><meta property="article:author" content="Erial"><meta property="article:tag" content="复习"><meta property="article:tag" content="分布式"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210606025605662.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2021/06/06/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8Fchap-7/"},"headline":"分布式chap-7","image":["c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210606025605662.png","c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210607000401609.png","c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210607000423159.png","c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210606175031080.png","c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210606175632348.png","c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210606203416907.png","c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210606204806534.png","c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210606205030605.png","c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210607000000288.png","c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210607000030926.png","c:/Users/Aerialith/AppData/Roaming/Typora/typora-user-images/image-20210607000131344.png"],"datePublished":"2021-06-05T16:52:17.000Z","dateModified":"2021-06-06T16:04:50.142Z","author":{"@type":"Person","name":"Erial"},"publisher":{"@type":"Organization","name":"Erial's Blog","logo":{"@type":"ImageObject","url":"http://example.com/img/ERIAL.png"}},"description":"弗洛伊德算法大纲 全对最短路径问题 动态二维数组 并行算法设计 点对点通信 块行矩阵 I&#x2F;O 分析和基准测试"}</script><link rel="canonical" href="http://example.com/2021/06/06/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8Fchap-7/"><link rel="icon" href="/img/Tabicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><!--!--><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const id = '#' + CSS.escape(location.hash.substring(1));
+          const $tabMenu = document.querySelector(`.tabs a[href="${id}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(id);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/ERIAL.png" alt="Erial&#039;s Blog" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2021-06-05T16:52:17.000Z" title="2021/6/6 00:52:17">2021-06-06</time>发表</span><span class="level-item"><time dateTime="2021-06-06T16:04:50.142Z" title="2021/6/7 00:04:50">2021-06-07</time>更新</span><span class="level-item"><a class="link-muted" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a></span><span class="level-item">16 分钟读完 (大约2348个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">分布式chap-7</h1><div class="content"><h2 id="弗洛伊德算法"><a href="#弗洛伊德算法" class="headerlink" title="弗洛伊德算法"></a>弗洛伊德算法</h2><h3 id="大纲"><a href="#大纲" class="headerlink" title="大纲"></a>大纲</h3><ul>
+<li>全对最短路径问题</li>
+<li>动态二维数组</li>
+<li>并行算法设计</li>
+<li>点对点通信</li>
+<li>块行矩阵 I&#x2F;O</li>
+<li>分析和基准测试</li>
+</ul>
+<span id="more"></span>
+
+<h3 id="全对最短路径"><a href="#全对最短路径" class="headerlink" title="全对最短路径"></a>全对最短路径</h3><img src="C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210606025605662.png" alt="image-20210606025605662" style="zoom:70%;" />
+
+<h4 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> k = <span class="number">0</span> to n<span class="number">-1</span></span><br><span class="line">	<span class="keyword">for</span> i = <span class="number">0</span> to n<span class="number">-1</span></span><br><span class="line">		<span class="keyword">for</span> j = <span class="number">0</span> to n<span class="number">-1</span></span><br><span class="line">			a[i,j] = min (a[i,j], a[i,k] + a[k,j])</span><br><span class="line">		endfor</span><br><span class="line">	endfor</span><br><span class="line">endfor</span><br></pre></td></tr></table></figure>
+
+<h4 id="动态二维数组"><a href="#动态二维数组" class="headerlink" title="动态二维数组"></a>动态二维数组</h4><h5 id="动态一维数组建立"><a href="#动态一维数组建立" class="headerlink" title="动态一维数组建立"></a>动态一维数组建立</h5><img src="C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210607000401609.png" alt="image-20210607000401609" style="zoom:67%;" />
+
+<h5 id="动态二维数组建立"><a href="#动态二维数组建立" class="headerlink" title="动态二维数组建立"></a>动态二维数组建立</h5><img src="C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210607000423159.png" alt="image-20210607000423159" style="zoom: 67%;" />
+
+
+
+<hr>
+<h3 id="分布式算法设计"><a href="#分布式算法设计" class="headerlink" title="分布式算法设计"></a>分布式算法设计</h3><ul>
+<li>划分</li>
+<li>通信</li>
+<li>聚合与映射</li>
+</ul>
+<h3 id="划分"><a href="#划分" class="headerlink" title="划分"></a>划分</h3><h4 id="区域划分？功能划分？"><a href="#区域划分？功能划分？" class="headerlink" title="区域划分？功能划分？"></a>区域划分？功能划分？</h4><ul>
+<li>看伪代码</li>
+<li>执行相同的赋值语句 $n^3$ 次</li>
+<li>没有并行性的函数</li>
+</ul>
+<p><strong>区域分解</strong>：将矩阵A划分为$n^2$个元素</p>
+<ul>
+<li>每个a[i，j]代表一项任务-需要找到一个最短的距离。</li>
+<li>然而，要找到距离需要看看所有k的a[i，k]和a[k，j]</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">代码同第一个代码块</span><br></pre></td></tr></table></figure>
+
+<h3 id="通信"><a href="#通信" class="headerlink" title="通信"></a>通信</h3><img src="C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210606175031080.png" alt="image-20210606175031080" style="zoom:70%;" />
+
+<h3 id="聚合与映射"><a href="#聚合与映射" class="headerlink" title="聚合与映射"></a>聚合与映射</h3><ul>
+<li>任务数：静态</li>
+<li>任务间的通信：结构化</li>
+<li>每个人物的计算时间：恒定</li>
+<li>计划<ul>
+<li>聚合任务以最大程度地减少通信</li>
+<li>每个MPI进程创建一个任务</li>
+</ul>
+</li>
+</ul>
+<h3 id="两种数据划分"><a href="#两种数据划分" class="headerlink" title="两种数据划分"></a>两种数据划分</h3><img src="C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210606175632348.png" alt="image-20210606175632348" style="zoom:70%;" />
+
+<h4 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h4><h5 id="逐列分块"><a href="#逐列分块" class="headerlink" title="逐列分块"></a>逐列分块</h5><ul>
+<li>消除了列内广播</li>
+</ul>
+<h5 id="逐行分块"><a href="#逐行分块" class="headerlink" title="逐行分块"></a>逐行分块</h5><ul>
+<li>消除行内广播</li>
+<li>从文件中读取矩阵更简单</li>
+</ul>
+<h5 id="选择逐行分块"><a href="#选择逐行分块" class="headerlink" title="选择逐行分块"></a><strong>选择逐行分块</strong></h5><h4 id="如何输入一个邻接矩阵"><a href="#如何输入一个邻接矩阵" class="headerlink" title="如何输入一个邻接矩阵"></a>如何输入一个邻接矩阵</h4><p>假设矩阵在文件中一排排地存储。<br>方法1） 每个进程都读取自己的行（或行）初始数据。该过程必须寻求正确的位置<br>共享文件。<br>方法2） 主进程读取所有行并发送数据到适当的进程。</p>
+<blockquote>
+<p>为什么我们不一次性输入整个文件，然后将其内容分散到各个进程中，以允许并发消息传递?（采用MPI_ScatterMPI_Scatterv）</p>
+<p>MPI组通信和点到点通信的一个重要区别，就在于它需要一个特定组内的所有进程同时参加通信而不是像点到点通信那样只涉及到发送方和接收方两个进程。组通信在各个不同进程的调用形式完全相同，而不像点到点通信那样在形式上就有发送和接收的区别。</p>
+<p>组通信一般实现三个功能：通信、同步和计算。通信功能主要完成组内数据的传输，而同步功能实现组内所有进程在特定的地点在执行进度上取得一致，计算功能要对给定的数据完成一定的操作，例如加减等。所以MPI_Send会具有更好的效率</p>
+</blockquote>
+<p>方法 2）最大限度地减少内存使用，因为只有一个进程需要读取和发送数据。消除了方法1中的寻求过程 ）。</p>
+<img src="C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210606203416907.png" alt="image-20210606203416907" style="zoom:80%;" />
+
+<hr>
+<h3 id="点对点通信"><a href="#点对点通信" class="headerlink" title="点对点通信"></a>点对点通信</h3><ul>
+<li>涉及一对进程</li>
+<li>一个进程发送消息</li>
+<li>其他进程收到消息</li>
+</ul>
+<h4 id="不集体发送接收数据"><a href="#不集体发送接收数据" class="headerlink" title="不集体发送接收数据"></a>不集体发送接收数据</h4><img src="C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210606204806534.png" alt="image-20210606204806534" style="zoom:80%;" />
+
+<h4 id="MPI-Send函数"><a href="#MPI-Send函数" class="headerlink" title="MPI_Send函数"></a>MPI_Send函数</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">MPI_Send</span> <span class="params">(</span></span><br><span class="line"><span class="params">      <span class="type">void</span>         *message,</span></span><br><span class="line"><span class="params">      <span class="type">int</span>           count,</span></span><br><span class="line"><span class="params">      MPI_Datatype  datatype,</span></span><br><span class="line"><span class="params">      <span class="type">int</span>           dest,</span></span><br><span class="line"><span class="params">      <span class="type">int</span>           tag,</span></span><br><span class="line"><span class="params">      MPI_Comm      comm</span></span><br><span class="line"><span class="params">)</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="MPI-Recv函数"><a href="#MPI-Recv函数" class="headerlink" title="MPI_Recv函数"></a>MPI_Recv函数</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">MPI_Recv</span> <span class="params">(</span></span><br><span class="line"><span class="params">      <span class="type">void</span>         *message,</span></span><br><span class="line"><span class="params">      <span class="type">int</span>           count,</span></span><br><span class="line"><span class="params">      MPI_Datatype  datatype,</span></span><br><span class="line"><span class="params">      <span class="type">int</span>           source,</span></span><br><span class="line"><span class="params">      <span class="type">int</span>           tag,</span></span><br><span class="line"><span class="params">      MPI_Comm      comm,</span></span><br><span class="line"><span class="params">      MPI_Status   *status</span></span><br><span class="line"><span class="params">)</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="MPI-Send和MPI-Recv-内部"><a href="#MPI-Send和MPI-Recv-内部" class="headerlink" title="MPI_Send和MPI_Recv 内部"></a>MPI_Send和MPI_Recv 内部</h4><img src="C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210606205030605.png" alt="image-20210606205030605" style="zoom: 67%;" />
+
+<h4 id="MPI-Send函数返回"><a href="#MPI-Send函数返回" class="headerlink" title="MPI_Send函数返回"></a>MPI_Send函数返回</h4><ul>
+<li>函数直到消息缓冲区为空才会返回</li>
+<li>以下情况缓存区空闲：<ul>
+<li>消息被复制到了系统缓冲区</li>
+<li>消息被传输走了</li>
+</ul>
+</li>
+<li>典型场景<ul>
+<li>消息复制到系统缓冲区</li>
+<li>传输重叠计算</li>
+</ul>
+</li>
+</ul>
+<h4 id="MPI-Recv函数返回"><a href="#MPI-Recv函数返回" class="headerlink" title="MPI_Recv函数返回"></a>MPI_Recv函数返回</h4><ul>
+<li>函数直到消息存在与缓冲区才返回</li>
+<li><em>消息永远没到，则函数永远不返回</em></li>
+</ul>
+<h4 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h4><p>死锁：进程等待一个永远不会成立的条件</p>
+<ul>
+<li>编写简单的发送接收代码<ul>
+<li>两个进程：都先接收再发送</li>
+<li>发送标签与接收标签不匹配</li>
+<li>进程向错误的目标进程发送消息</li>
+</ul>
+</li>
+</ul>
+<p>例1：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (id == <span class="number">0</span>) &#123;</span><br><span class="line">	MPI_Recv (&amp;b,...);</span><br><span class="line">	MPI_Send (&amp;a,...);</span><br><span class="line">   c = (a + b)/<span class="number">2.0</span>; </span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (id == <span class="number">1</span>) &#123;</span><br><span class="line">	MPI_Recv (&amp;a,...);</span><br><span class="line">	MPI_Send (&amp;b,...);</span><br><span class="line">   c = (a + b)/<span class="number">2.0</span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>进程0等待1的消息而阻塞，进程1等待0的消息而阻塞，产生了死锁。</p>
+<p>例2：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (id ==<span class="number">0</span>) &#123;</span><br><span class="line">	MPI_Send(&amp;a, ... <span class="number">1</span>,MPI_COMM_WORLD);</span><br><span class="line">	MPI_Recv(&amp;b, ... <span class="number">1</span>, MPI_COMM_WORLD,&amp;status);</span><br><span class="line">	c = (a+b)/<span class="number">2.0</span>; </span><br><span class="line">&#125;<span class="keyword">else</span> <span class="keyword">if</span> (id ==<span class="number">1</span>) &#123;</span><br><span class="line">	MPI_Send(&amp;a, ... <span class="number">0</span>,MPI_COMM_WORLD);</span><br><span class="line">	MPI_Recv(&amp;b, ... <span class="number">0</span>, MPI_COMM_WORLD,&amp;status);</span><br><span class="line">	c = (a+b)/<span class="number">2.0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这两个进程在尝试接收之前都会发送，但仍然陷入死锁。 为什么？</p>
+<p><strong>答</strong>：标签错了。进程0正在尝试接收1的标签，但进程1正在发送0的标签。</p>
+<hr>
+<h3 id="MPI程序的安全"><a href="#MPI程序的安全" class="headerlink" title="MPI程序的安全"></a>MPI程序的安全</h3><ul>
+<li>依赖MPI缓冲区的程序被认为是不安全的</li>
+<li>这样的程序对于各种输入集可能运行没有问题，但它可能会挂起或崩溃与其他集。</li>
+</ul>
+<h4 id="MPI标准允许MPI-Send以两种不同的方式运行："><a href="#MPI标准允许MPI-Send以两种不同的方式运行：" class="headerlink" title="MPI标准允许MPI_Send以两种不同的方式运行："></a>MPI标准允许MPI_Send以两种不同的方式运行：</h4><ul>
+<li>他可以简单地将消息复制到MPI管理的缓冲区中并返回</li>
+<li>他也可以阻塞，直到对MPI_Recv地匹配调用开始</li>
+</ul>
+<h4 id="MPI的许多实现设置了系统从缓冲切换到阻塞的阈值"><a href="#MPI的许多实现设置了系统从缓冲切换到阻塞的阈值" class="headerlink" title="MPI的许多实现设置了系统从缓冲切换到阻塞的阈值"></a>MPI的许多实现设置了系统从缓冲切换到阻塞的阈值</h4><ul>
+<li>相对较小的消息将由MPI_Send缓冲</li>
+<li>较大的消息将导致他阻塞</li>
+</ul>
+<p><strong>例1</strong>：从进程0发送一个很大的消息到进程1，如果目的地存储空间不足，发送必须等待用户提供内存空间（通过接收），下列执行顺序会发生什么？</p>
+<table>
+<thead>
+<tr>
+<th>Process 0</th>
+<th>Process 1</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Send（1）</td>
+<td>Send（0）</td>
+</tr>
+<tr>
+<td>Recv（1）</td>
+<td>Recv（0）</td>
+</tr>
+</tbody></table>
+<p>这是“不安全”的，因为它依赖于系统缓冲区的可用性，需要Process 0暂时阻塞等待Process 1提供足够的内存。</p>
+<p><strong>例2</strong>：生产者和消费者，如果进程 0 需要向处理 1 发送大量消息，并且发送速度比接受速度快。</p>
+<table>
+<thead>
+<tr>
+<th>Process 0</th>
+<th>Process 1</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Send（1）</td>
+<td>Recv（0）</td>
+</tr>
+</tbody></table>
+<p>在一开始的时候，系统的缓冲区并未被填满，后来满了之后，需要Process 0暂时阻塞等待Process 1提供足够的内存。</p>
+<h4 id="方法一：MPI-Ssend"><a href="#方法一：MPI-Ssend" class="headerlink" title="方法一：MPI_Ssend"></a>方法一：MPI_Ssend</h4><p>MPI 标准定义的MPI_Send替代方法。额外的”s”表示同步，MPI_Ssend保证阻塞，直到匹配接收开始。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">MPI_Ssend</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">void</span>             * msg_buf_p;</span><br><span class="line">    <span class="type">int</span>              msg_size;</span><br><span class="line">    MPI_Datatype    msg_type;</span><br><span class="line">    <span class="type">int</span>             dest;</span><br><span class="line">    <span class="type">int</span>             tag;</span><br><span class="line">    MPI_Comm        communicator;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="方法二：调整通信"><a href="#方法二：调整通信" class="headerlink" title="方法二：调整通信"></a>方法二：调整通信</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">MPI_Send(msg,size,MPI_INT,(my_rank+<span class="number">1</span>)%comm_sz,<span class="number">0</span>,comm)</span><br><span class="line">MPI_Recv(new_msg,size,MPI_INT,(my_rank+comm_sz<span class="number">-1</span>)%comm_sz,<span class="number">0</span>,comm,</span><br><span class="line">MPI_STATUS_IGNORE)</span><br><span class="line">    改为</span><br><span class="line"><span class="keyword">if</span>(my_rank%<span class="number">2</span>==<span class="number">0</span>)&#123;</span><br><span class="line">    MPI_Send(msg,size,MPI_INT,(my_rank+<span class="number">1</span>)%comm_sz,<span class="number">0</span>,comm);</span><br><span class="line">    MPI_Recv(new_msg,size,MPI_INT,(my_rank+comm_sz<span class="number">-1</span>)%comm_sz,<span class="number">0</span>,comm,</span><br><span class="line">MPI_STATUS_IGNORE);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    MPI_Recv(new_msg,size,MPI_INT,(my_rank+comm_sz<span class="number">-1</span>)%comm_sz,<span class="number">0</span>,comm,</span><br><span class="line">MPI_STATUS_IGNORE);</span><br><span class="line">    MPI_Send(msg,size,MPI_INT,(my_rank+<span class="number">1</span>)%comm_sz,<span class="number">0</span>,comm);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>偶数个comm_sz没问题，奇数个则不安全</p>
+<h4 id="方法三：MPI-Sendrecv"><a href="#方法三：MPI-Sendrecv" class="headerlink" title="方法三：MPI_Sendrecv"></a>方法三：MPI_Sendrecv</h4><ul>
+<li>自己安排通信的替代方法。</li>
+<li>在单个调用中执行阻塞发送和接收。</li>
+<li>dest 和 source 可以相同或不同。</li>
+<li>特别有用，因为 MPI 会安排通信以便程序不会挂起或崩溃。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">MPI_Sendrecv</span><span class="params">(</span></span><br><span class="line"><span class="params">    <span class="type">void</span>*                 send_buf_p;</span></span><br><span class="line"><span class="params">    <span class="type">int</span>                 send_buf_size;</span></span><br><span class="line"><span class="params">    MPI_Datatype        send_buf_type;</span></span><br><span class="line"><span class="params">    <span class="type">int</span>                 dest;</span></span><br><span class="line"><span class="params">    <span class="type">int</span>                 send_tag;</span></span><br><span class="line"><span class="params">    <span class="type">void</span>*                 recv_buf_p;</span></span><br><span class="line"><span class="params">    <span class="type">int</span>                 recv_buf_size;</span></span><br><span class="line"><span class="params">    MPI_Datatype        recv_buf_type;</span></span><br><span class="line"><span class="params">    <span class="type">int</span>                    source;</span></span><br><span class="line"><span class="params">    <span class="type">int</span>                 recv_tag;</span></span><br><span class="line"><span class="params">    MPI_Comm            communicator;</span></span><br><span class="line"><span class="params">    MPI_Status*            status_p;        </span></span><br><span class="line"><span class="params">)</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="集群通信和点对点通信"><a href="#集群通信和点对点通信" class="headerlink" title="集群通信和点对点通信"></a>集群通信和点对点通信</h4><ul>
+<li><p>在通讯子中全部进程必须调用相同的集合函数</p>
+<ul>
+<li>例如，如果一个程序试图将一个进程上对MPI Reduce的调用与另一个进程上对MPI Recv的调用相匹配，那么这个程序很可能会挂起或崩溃。</li>
+</ul>
+</li>
+<li><p>每个进程传递给 MPI 集体通信的参数必须是“兼容的”。</p>
+<ul>
+<li>例如，如果一个进程传入 0 作为 目标进程 另一个传入 1，然后调用结果 MPI_Reduce 是错误的，而且程序很可能会挂起或崩溃。</li>
+</ul>
+</li>
+<li><p>out_data_p参数只会被被dest_process使用</p>
+</li>
+<li><p>但是，所有的进程仍然需要传入一个对应的实参 out_data_p，即使它只是空值.</p>
+</li>
+<li><p>点对点通信在 标签和通信子的基础上被匹配。</p>
+</li>
+<li><p>集群通信不需要使用标签</p>
+</li>
+<li><p>集群通信不使用标签</p>
+<ul>
+<li>他们被匹配仅仅在通信子的基础和他们被调用的顺序</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="块行剧真I-x2F-O并行代码"><a href="#块行剧真I-x2F-O并行代码" class="headerlink" title="块行剧真I&#x2F;O并行代码"></a>块行剧真I&#x2F;O并行代码</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span> <span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span>&#123;</span><br><span class="line">    dtype**    a;         <span class="comment">/*doubly-subscripted array*/</span></span><br><span class="line">    dtype*     storage; <span class="comment">/*Loacl portion of array elements*/</span></span><br><span class="line">    <span class="type">int</span> i,j,k;</span><br><span class="line">    <span class="type">int</span> id;</span><br><span class="line">    <span class="type">int</span> m;<span class="comment">/*rows in maxtrix*/</span></span><br><span class="line">    <span class="type">int</span> n;<span class="comment">/*columns in maxtrix*/</span></span><br><span class="line">    <span class="type">int</span> p;<span class="comment">/*number of processes*/</span></span><br><span class="line">    <span class="type">double</span> time,max_time;</span><br><span class="line">    <span class="type">void</span> <span class="title function_">compute_shortest_paths</span><span class="params">(<span class="type">int</span>,<span class="type">int</span>,<span class="type">int</span>**,<span class="type">int</span>)</span>;</span><br><span class="line">    MPI_Init (&amp;argc, &amp;argv);</span><br><span class="line">    MPI_Comm_rank(MPI_COMM_WORLD,&amp;id);</span><br><span class="line">    MPI_Comm_size(MPI_COMM_WORLD,&amp;p);</span><br><span class="line">    read_row_striped_matrix(argv[<span class="number">1</span>],(<span class="type">void</span>*) &amp;a),(<span class="type">void</span>*) &amp;storage,MPI_TYPE,&amp;m,&amp;n,MPI_COMM_WORLD);</span><br><span class="line">    <span class="keyword">if</span>(m!=n) <span class="built_in">terminate</span>(id,<span class="string">&quot;Matrix must be square\n&quot;</span>);</span><br><span class="line">    pirnt_row_striped_matrix((<span class="type">void</span>**) a,MPI_TYPE,<span class="number">0</span>,MPI_COMM_WORLD);</span><br><span class="line">    MPI_Barrier(MPI_COMMON_WORLD);</span><br><span class="line">    time =-MPI_Wtime;</span><br><span class="line">    compute_shortest_paths(id,p,(dtype**) a,n);</span><br><span class="line">    time+=MPI_Wtime;</span><br><span class="line">    MPI_Reduce(&amp;time,&amp;max_time,<span class="number">1</span>,MPI_DOUBLE,MPI_MAX,<span class="number">0</span>,MPI_COMM_WORLD);</span><br><span class="line">    <span class="keyword">if</span>(!id) <span class="built_in">printf</span>(<span class="string">&quot;Floyd,matrix size %d,%d processes:%6.2f seconds\n&quot;</span>,n,p,max_time);</span><br><span class="line">    pirnt_row_striped_matrix((<span class="type">void</span>**) a,MPI_TYPE,<span class="number">0</span>,MPI_COMM_WORLD);</span><br><span class="line">    MPI_Finalize();</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> <span class="title function_">compute_shortest_paths</span><span class="params">(<span class="type">int</span> id,<span class="type">int</span> p,dtype** a,<span class="type">int</span> n)</span>&#123;</span><br><span class="line">    <span class="type">int</span> i,j,k;</span><br><span class="line">    <span class="type">int</span> offset;<span class="comment">//local index of broadcast row</span></span><br><span class="line">    <span class="type">int</span> root;<span class="comment">//process controlling row to be cast;</span></span><br><span class="line">    <span class="type">int</span> *tmp;<span class="comment">//holds the broadcast row;</span></span><br><span class="line">    tmp=(dtype *)<span class="built_in">malloc</span> (n*<span class="keyword">sizeof</span>(dtype));</span><br><span class="line">    <span class="keyword">for</span>(k=<span class="number">0</span>;k&lt;n;k++)&#123;</span><br><span class="line">        root=BLOCK_OWNER(id,p,n);</span><br><span class="line">        <span class="keyword">if</span>(root==id)&#123;</span><br><span class="line">            offset=k-BLOCK_LOW(id,p,n);</span><br><span class="line">            <span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;n;j++)&#123;</span><br><span class="line">                temp[j]=a[offset][l];</span><br><span class="line">            &#125;</span><br><span class="line">            MPI_Bcast(tmp,n,MPI_TYPE,root,MPI_COMM_WORLD);</span><br><span class="line">            <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;BLOCK_SIZE(id,p,n);i++)&#123;</span><br><span class="line">                <span class="keyword">for</span>(j=<span class="number">0</span>;j&lt;n;j++)&#123;</span><br><span class="line">                    a[i][j]=MIN(a[i][j],a[i][k]+temp[j]);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">free</span> (tmp);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h3 id="分析和基准测试程序"><a href="#分析和基准测试程序" class="headerlink" title="分析和基准测试程序"></a>分析和基准测试程序</h3><h4 id="计算复杂度"><a href="#计算复杂度" class="headerlink" title="计算复杂度"></a>计算复杂度</h4><ul>
+<li>最内层循环具有复杂性 Θ(n)</li>
+<li>中间循环最多执行 ↑[n&#x2F;p]次</li>
+<li>外循环执行 n 次</li>
+<li>总体复杂度 Θ(n3&#x2F;p)</li>
+</ul>
+<h4 id="空间复杂度"><a href="#空间复杂度" class="headerlink" title="空间复杂度"></a>空间复杂度</h4><ul>
+<li>内循环无通信</li>
+<li>中间循环无通讯</li>
+<li>外循环广播 — 复杂性是 Θ（$nlogp$）</li>
+<li>总体复杂度 ($n^2logp$)</li>
+</ul>
+<h4 id="执行表达式"><a href="#执行表达式" class="headerlink" title="执行表达式"></a>执行表达式</h4><ul>
+<li><p>表达式1</p>
+  <img src="C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210607000000288.png" alt="image-20210607000000288" style="zoom: 80%;" />
+</li>
+<li><p>计算&#x2F;通信 重叠</p>
+  <img src="C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210607000030926.png" alt="image-20210607000030926" style="zoom:80%;" />
+</li>
+<li><p>表达式2</p>
+</li>
+</ul>
+<img src="C:\Users\Aerialith\AppData\Roaming\Typora\typora-user-images\image-20210607000131344.png" alt="image-20210607000131344" style="zoom:80%;" />
+
+<h4 id="预测与实际性能对比"><a href="#预测与实际性能对比" class="headerlink" title="预测与实际性能对比"></a>预测与实际性能对比</h4><table>
+<thead>
+<tr>
+<th></th>
+<th>Execution Time (sec)</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Processes</td>
+<td>Predicted</td>
+<td>Actual</td>
+</tr>
+<tr>
+<td>1</td>
+<td>25.54</td>
+<td>25.54</td>
+</tr>
+<tr>
+<td>2</td>
+<td>13.02</td>
+<td>13.89</td>
+</tr>
+<tr>
+<td>3</td>
+<td>9.01</td>
+<td>9.60</td>
+</tr>
+<tr>
+<td>4</td>
+<td>6.89</td>
+<td>7.29</td>
+</tr>
+<tr>
+<td>5</td>
+<td>5.86</td>
+<td>5.99</td>
+</tr>
+<tr>
+<td>6</td>
+<td>5.01</td>
+<td>5.16</td>
+</tr>
+<tr>
+<td>7</td>
+<td>4.40</td>
+<td>4.50</td>
+</tr>
+<tr>
+<td>8</td>
+<td>3.94</td>
+<td>3.98</td>
+</tr>
+</tbody></table>
+</div><div class="article-licensing box"><div class="licensing-title"><p>分布式chap-7</p><p><a href="http://example.com/2021/06/06/分布式/分布式chap-7/">http://example.com/2021/06/06/分布式/分布式chap-7/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>Erial</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2021-06-06</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2021-06-07</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/%E5%A4%8D%E4%B9%A0/">复习</a><a class="link-muted mr-2" rel="tag" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a></div><!--!--></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/img/alipay.jpeg" alt="支付宝"></span></a><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wechatpay.jpeg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2021/06/07/CUDA/cuda2/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">cuda2</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2021/06/05/%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8Fchap-6/"><span class="level-item">分布式chap-6</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><!--!--></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2023-02-06T12:23:50.000Z">2023-02-06</time></p><p class="title"><a href="/2023/02/06/Hexo/Hexo%E5%AE%89%E8%A3%85/">Hexo安装</a></p><p class="categories"><a href="/categories/Hexo-Blog/">Hexo Blog</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-06-11T08:46:40.000Z">2021-06-11</time></p><p class="title"><a href="/2021/06/11/CUDA/cuda6/">cuda6</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-06-10T08:46:40.000Z">2021-06-10</time></p><p class="title"><a href="/2021/06/10/CUDA/cuda5/">cuda5</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-06-09T08:46:40.000Z">2021-06-09</time></p><p class="title"><a href="/2021/06/09/CUDA/cuda4/">cuda4</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2021-06-08T08:46:40.000Z">2021-06-08</time></p><p class="title"><a href="/2021/06/08/CUDA/cuda3/">cuda3</a></p></div></article></div></div></div><div class="column column-right is-4-tablet is-4-desktop is-4-widescreen  order-3 is-sticky"><!--!--></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/ERIAL.png" alt="Erial&#039;s Blog" height="28"></a><p class="is-size-7"><span>&copy; 2023 Erial</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-cn");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>
